@@ -1,6 +1,6 @@
-Basic usage:
+# Basic usage
 
-```
+```go
 /* launch norikra */
 c := New("localhost", 26571)
 c.Open("target1", nil, true)
