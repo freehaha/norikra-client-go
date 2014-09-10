@@ -33,3 +33,32 @@ for _, e := range results {
 	log.Printf("data: %s", data)
 }
 ```
+
+# Event structures
+
+Events sent are converted to msgpack format using `github.com/ugorji/go/codec` so you can use 'codec' tag
+to annotate your custom structures:
+
+```go
+type Event struct {
+	Id   int    `codec:"id"`
+	Data string `codec:"data"`
+}
+
+events := []interface{}{
+	&Event{
+		Id:   3,
+		Data: "a",
+	},
+	&Event{
+		Id:   2,
+		Data: "b",
+	},
+	&Event{
+		Id:   1,
+		Data: "c",
+	},
+}
+
+err := c.Send("target1", events)
+```
