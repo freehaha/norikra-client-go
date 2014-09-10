@@ -1,24 +1,35 @@
 # Basic usage
 
 ```go
-/* launch norikra */
-c := New("localhost", 26571)
+/* launch norikra before testing*/
+
+c := norikra.New("localhost", 26571)
 c.Open("target1", nil, true)
-c.Register("query1", "", "select data from target1 where id=3")
+defer c.Close("target1")
+c.Register("query1", "", "select data from target1 where id > 1")
 
 events := []interface{}{
-	map[string]string{
-		"test": "a",
+	map[string]interface{}{
+		"id":   3,
+		"data": "a",
 	},
-	map[string]string{
-		"test": "b",
+	map[string]interface{}{
+		"id":   2,
+		"data": "b",
+	},
+	map[string]interface{}{
+		"id":   1,
+		"data": "c",
 	},
 }
 err := c.Send("target1", events)
-results, err = c.See("query1")
-/* c.Events("query1") to fetch events and wipe them from norikra*/
-/* decoded from msgpack string values will be in []uint8 */
-text := string(results[0]["test"].([]uint8))
-/* results[1], results[2] .. */
+if err != nil {
+	log.Printf("err: %s", err)
+}
 
+results, err := c.See("query1")
+for _, e := range results {
+	data := string(e["data"].([]uint8))
+	log.Printf("data: %s", data)
+}
 ```
