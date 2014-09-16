@@ -104,6 +104,8 @@ func convertKeys(obj map[interface{}]interface{}) map[string]interface{} {
 		switch t := v.(type) {
 		case map[interface{}]interface{}:
 			ev[strKey] = convertKeys(t)
+		case []uint8:
+			ev[strKey] = string(t)
 		default:
 			ev[strKey] = v
 		}
@@ -185,8 +187,15 @@ func (c *Client) Queries() (queries []Query, err error) {
 			}
 			tss = append(tss, string(ustr))
 		}
+		tmp, ok := m["group"]
+		var group string
+		if !ok || tmp == nil {
+			group = ""
+		} else {
+			group = string(tmp.([]uint8))
+		}
 		query := Query{
-			Group:      string(m["group"].([]uint8)),
+			Group:      group,
 			Name:       string(m["name"].([]uint8)),
 			Expression: string(m["expression"].([]uint8)),
 			Targets:    tss,
